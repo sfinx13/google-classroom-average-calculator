@@ -1,6 +1,6 @@
 # Google Classroom Average Calculator
 
-Ce projet répond à plusieurs limites fonctionnelles de Google Classroom dans le cadre du suivi pédagogique et de l’analyse des performances des élèves.
+Ce projet répond à plusieurs limites fonctionnelles de Google Classroom dans le cadre du suivi pédagogique des élèves.
 
 En particulier :
 

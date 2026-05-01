@@ -1,0 +1,7 @@
+services:
+    Google\Client:
+        class: Google\Client
+        calls:
+            # Authentication with "OAuth 2.0" using Client ID & Secret
+            - [setClientId, ['%env(GOOGLE_CLIENT_ID)%']]
+            - [setClientSecret, ['%env(GOOGLE_CLIENT_SECRET)%']]

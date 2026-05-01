@@ -87,7 +87,7 @@ Une interface de consultation des résultats est disponible pour visualiser les 
 ```
 symfony server:start
 ```
-- **Accès** : `http://127.0.0.1:8001/`
+- **Accès** : http://127.0.0.1:8001/
 
 ### 🏫 Gestion des classes et élèves
 

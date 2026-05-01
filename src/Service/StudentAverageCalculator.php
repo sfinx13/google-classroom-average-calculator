@@ -10,6 +10,7 @@ use App\Dto\Student;
 use App\Dto\StudentAverage;
 use App\Dto\SubjectAverage;
 use App\Dto\Topic;
+use App\Entity\Enum\Topic as TopicEnum;
 use App\Exception\NoGradesFoundException;
 use App\Exception\StudentNotFoundException;
 use App\Repository\StudentRepository;
@@ -19,17 +20,6 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 class StudentAverageCalculator
 {
-    private const array TOPIC_SCALES = [
-        'Lecture' => 20,
-        'Dictée' => 10,
-        'Qissas' => 35,
-        'Traduction' => 10,
-        'Conjugaison' => 20,
-        'Vocabulaire' => 20,
-        'Grammaire' => 40,
-        'Devoir' => 10,
-    ];
-
     public function __construct(
         private readonly GoogleClassroomClient $client,
         private readonly ClassroomResultManager $classroomResultManager,
@@ -181,7 +171,7 @@ class StudentAverageCalculator
                     $topicId = $courseWork->topicId ?? 'unknown';
 
                     $subjectName = $topicNames[$topicId] ?? 'Autre';
-                    $targetScale = self::TOPIC_SCALES[$subjectName] ?? 20;
+                    $targetScale = TopicEnum::scales()[$subjectName] ?? 20;
                     $grade = $submission->assignedGrade;
                     if ($courseWork->maxPoints > 0) {
                         $grade = ($grade / $courseWork->maxPoints) * $targetScale;
@@ -212,7 +202,7 @@ class StudentAverageCalculator
         foreach ($gradesByTopic as $topicId => $grades) {
             $average = array_sum($grades) / count($grades);
             $subjectName = $topicNames[$topicId] ?? 'Inconnu';
-            $maxPoints = self::TOPIC_SCALES[$subjectName] ?? 20;
+            $maxPoints = TopicEnum::scales()[$subjectName] ?? 20;
 
             $subjectAverages[] = new SubjectAverage(
                 $subjectName,

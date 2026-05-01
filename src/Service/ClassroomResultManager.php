@@ -61,10 +61,10 @@ class ClassroomResultManager
             $classroomResult
                 ->setStudent($student)
                 ->setStartDate($startDate)
-                ->setEndDate($endDate)
-                ->setAverage($studentAverage->globalAverage);
+                ->setEndDate($endDate);
         }
 
+        $classroomResult->setAverage($studentAverage->globalAverage);
         $studentAverageNormalized = $this->normalizer->normalize($studentAverage);
         $classroomResult->setResult($studentAverageNormalized);
 

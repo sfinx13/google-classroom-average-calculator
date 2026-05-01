@@ -1,0 +1,315 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Résultats des élèves - Google Classroom{% endblock %}
+
+{% block stylesheets %}
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <!-- Utilisation de Material Components for the Web (MCW) ou simplement du CSS inspiré de M3 -->
+    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --md-sys-color-primary: #6750A4;
+            --md-sys-color-on-primary: #FFFFFF;
+            --md-sys-color-primary-container: #EADDFF;
+            --md-sys-color-on-primary-container: #21005D;
+            --md-sys-color-surface: #FEF7FF;
+            --md-sys-color-on-surface: #1D1B20;
+            --md-sys-color-surface-variant: #E7E0EC;
+            --md-sys-color-on-surface-variant: #49454F;
+            --md-sys-color-outline: #79747E;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--md-sys-color-surface);
+            color: var(--md-sys-color-on-surface);
+            margin: 0;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 400;
+            margin: 0;
+            color: var(--md-sys-color-on-surface);
+        }
+
+        .sort-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .md-select {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--md-sys-color-outline);
+            background-color: var(--md-sys-color-surface);
+            color: var(--md-sys-color-on-surface);
+            font-family: 'Roboto', sans-serif;
+            font-size: 0.875rem;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .md-select:focus {
+            border-color: var(--md-sys-color-primary);
+            border-width: 2px;
+            padding: 7px 15px;
+        }
+
+        .surface-container {
+            background-color: #fff;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--md-sys-color-surface-variant);
+            color: var(--md-sys-color-on-surface-variant);
+            padding: 16px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            border-bottom: 1px solid var(--md-sys-color-outline);
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid var(--md-sys-color-surface-variant);
+            font-size: 0.875rem;
+        }
+
+        tr:hover {
+            background-color: rgba(103, 80, 164, 0.04);
+        }
+
+        .student-name {
+            font-weight: 500;
+            color: var(--md-sys-color-primary);
+        }
+
+        .average-global {
+            font-weight: 700;
+            color: var(--md-sys-color-on-primary-container);
+            background-color: var(--md-sys-color-primary-container);
+            padding: 4px 8px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .empty-cell {
+            color: var(--md-sys-color-outline);
+            font-style: italic;
+        }
+
+        .scale-info {
+            font-size: 0.75rem;
+            color: var(--md-sys-color-outline);
+            display: block;
+            font-weight: 400;
+        }
+
+        .filters-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 32px;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .input-group label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--md-sys-color-on-surface-variant);
+        }
+
+        .md-input {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--md-sys-color-outline);
+            background-color: var(--md-sys-color-surface);
+            color: var(--md-sys-color-on-surface);
+            font-family: 'Roboto', sans-serif;
+            font-size: 0.875rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .md-input:focus {
+            border-color: var(--md-sys-color-primary);
+            border-width: 2px;
+            padding: 7px 11px;
+        }
+
+        .md-button {
+            padding: 10px 24px;
+            border-radius: 20px;
+            border: none;
+            background-color: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+            font-family: 'Roboto', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .md-button:hover {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        }
+
+        .md-button-text {
+            background: none;
+            color: var(--md-sys-color-primary);
+            padding: 10px 16px;
+        }
+
+        .md-button-text:hover {
+            background-color: rgba(103, 80, 164, 0.08);
+            box-shadow: none;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Résultats des élèves</h1>
+
+        <form method="get" class="filters-container">
+            <div class="filter-group">
+                <div class="input-group">
+                    <label for="trimester">Trimestre</label>
+                    <select name="trimester" id="trimester" class="md-select" onchange="this.form.submit()">
+                        <option value="" {{ current_trimester is empty ? 'selected' : '' }}>Tous les trimestres</option>
+                        <option value="T1" {{ current_trimester == 'T1' ? 'selected' : '' }}>Trimestre 1</option>
+                        <option value="T2" {{ current_trimester == 'T2' ? 'selected' : '' }}>Trimestre 2</option>
+                        <option value="T3" {{ current_trimester == 'T3' ? 'selected' : '' }}>Trimestre 3</option>
+                    </select>
+                </div>
+
+                {% if current_trimester or start_date or end_date or current_sort != 'none' %}
+                    <a href="{{ path('app_classroom_results') }}" class="md-button md-button-text" style="text-decoration: none; margin-top: 20px;">
+                        Réinitialiser
+                    </a>
+                {% endif %}
+            </div>
+
+            <div class="filter-group">
+                <div class="input-group">
+                    <label for="sort">Trier par moyenne</label>
+                    <select name="sort" id="sort" class="md-select" onchange="this.form.submit()">
+                        <option value="none" {{ current_sort == 'none' ? 'selected' : '' }}>Aucun tri</option>
+                        <option value="desc" {{ current_sort == 'desc' ? 'selected' : '' }}>Moyenne la plus haute</option>
+                        <option value="asc" {{ current_sort == 'asc' ? 'selected' : '' }}>Moyenne la plus basse</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+
+        <div class="surface-container">
+            <div class="table-wrapper">
+                <table aria-label="Tableau des résultats des élèves">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nom de l’élève</th>
+                            <th scope="col">Moyenne générale <span class="scale-info">/20</span></th>
+                            {% for topic, scale in topic_scales %}
+                                <th scope="col">{{ topic }} <span class="scale-info">/{{ scale }}</span></th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in results %}
+                            {% set result = item.result %}
+                            <tr>
+                                <td class="student-name">{{ result.studentName|capitalize }}</td>
+                                <td>
+                                    {% if result.globalAverage is defined and result.globalAverage is not null %}
+                                        <span class="average-global">{{ result.globalAverage|number_format(2, ',', ' ') }} <span style="font-size: 0.7rem; font-weight: 400;">/20</span></span>
+                                    {% else %}
+                                        <span class="empty-cell">Non évalué</span>
+                                    {% endif %}
+                                </td>
+
+                                {% for topic, scale in topic_scales %}
+                                    <td>
+                                        {% set found = false %}
+                                        {% for subject in result.subjects %}
+                                            {% if subject.subjectName == topic %}
+                                                {{ subject.average|number_format(2, ',', ' ') }}
+                                                {% set found = true %}
+                                            {% endif %}
+                                        {% endfor %}
+
+                                        {% if not found %}
+                                            <span class="empty-cell">-</span>
+                                        {% endif %}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="{{ topic_scales|length + 2 }}" style="text-align: center; padding: 32px;">
+                                    Aucun résultat disponible pour le moment.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

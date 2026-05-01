@@ -21,6 +21,7 @@ Ce projet apporte une couche de traitement permettant :
 *   **Docker & Docker Compose**
 *   **Google Classroom API** (via `google/apiclient`)
 *   **PHPUnit** (pour les tests)
+*   **Material Design 3**
 
 ## 🛠 Installation et Configuration
 
@@ -30,7 +31,7 @@ Ce projet apporte une couche de traitement permettant :
 
 ### 2. Clonage et initialisation
 ```bash
-# Lancer les conteneurs (si vous utilisez Docker)
+# Lancer les conteneurs
 docker compose up -d
 ```
 
@@ -79,7 +80,14 @@ php bin/console app:google:generate-refresh-token
     GOOGLE_REFRESH_TOKEN=votre_refresh_token
     ```
 
-## 📖 Commandes disponibles
+## 📖 Interface et Commandes
+
+### 🌐 Interface Web
+Une interface de consultation des résultats est disponible pour visualiser les moyennes des élèves.
+```
+symfony server:start
+```
+- **Accès** : `http://127.0.0.1:8001/`
 
 ### 🏫 Gestion des classes et élèves
 
@@ -110,19 +118,6 @@ php bin/console app:classroom:compute-average "Nom de l'élève" --courseId=[ID]
 *   `--end-date` : Date de fin (format Y-m-d, ex: 2025-03-31).
 
 > **Note sur le cache :** Si un calcul a déjà été effectué pour un élève sur la même période, l'application récupérera le résultat en base de données au lieu d'appeler l'API Google.
-
-## 🧮 Barèmes appliqués
-Les moyennes sont calculées selon les barèmes spécifiques suivants :
-*   **Lecture** : /20
-*   **Grammaire** : /40
-*   **Dictée** : /10
-*   **Qissas** : /35
-*   **Traduction** : /10
-*   **Conjugaison** : /20
-*   **Vocabulaire** : /20
-*   **Devoir** : /10
-
-La moyenne générale est calculée en normalisant chaque matière sur 20.
 
 ## 🧪 Tests
 Pour lancer les tests unitaires :

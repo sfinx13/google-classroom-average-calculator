@@ -13,13 +13,14 @@ Ce projet apporte une couche de traitement permettant :
 - de normaliser les notes
 - de calculer des moyennes adaptées au contexte pédagogique
 
+
 ## 🚀 Technologies utilisées
 
 *   **PHP 8.4** 
 *   **Symfony 8.x**
 *   **MySQL 8.0**
 *   **Docker & Docker Compose**
-*   **Google Classroom API** (via `google/apiclient`)
+*   **Google Classroom API** (via `google/apiclient`) 
 *   **PHPUnit** (pour les tests)
 *   **Material Design 3**
 
@@ -85,7 +86,7 @@ php bin/console app:google:generate-refresh-token
 ### 🌐 Interface Web
 Une interface de consultation des résultats est disponible pour visualiser les moyennes des élèves.
 ```
-symfony server:start
+symfony server:start -d
 ```
 - **Accès** : http://127.0.0.1:8001/
 
@@ -124,3 +125,7 @@ Pour lancer les tests unitaires :
 ```bash
 vendor/bin/phpunit
 ```
+
+## Documentation
+[La documentation Google Classroom API est disponible](https://developers.google.com/workspace/classroom?hl=fr).
+

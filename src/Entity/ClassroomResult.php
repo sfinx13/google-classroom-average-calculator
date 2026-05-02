@@ -31,6 +31,9 @@ class ClassroomResult
     #[ORM\Column(nullable: true)]
     private ?string $googleDocBulletinLink = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $appreciation = null;
+
     /**
      * @var array{
      *     studentName: string,
@@ -146,6 +149,18 @@ class ClassroomResult
     public function setGoogleDocBulletinLink(?string $googleDocBulletinLink): static
     {
         $this->googleDocBulletinLink = $googleDocBulletinLink;
+
+        return $this;
+    }
+
+    public function getAppreciation(): ?string
+    {
+        return $this->appreciation;
+    }
+
+    public function setAppreciation(?string $appreciation): static
+    {
+        $this->appreciation = $appreciation;
 
         return $this;
     }

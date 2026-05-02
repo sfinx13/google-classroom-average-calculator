@@ -83,4 +83,14 @@ class BulletinGoogleDocGenerator
             'url' => sprintf('https://docs.google.com/document/d/%s/edit', $documentId),
         ];
     }
+
+    /**
+     * @throws Exception
+     */
+    public function delete(string $documentId): void
+    {
+        $this->logger->info(sprintf('Deleting bulletin with ID %s', $documentId));
+        $driveService = $this->googleClient->getDriveService();
+        $driveService->files->delete($documentId);
+    }
 }

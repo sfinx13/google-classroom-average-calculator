@@ -249,6 +249,122 @@
             background-color: transparent;
         }
 
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--md-sys-color-surface);
+            padding: 24px;
+            border-radius: 28px;
+            width: 100%;
+            max-width: 560px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            animation: modal-open 0.3s ease-out;
+        }
+
+        @keyframes modal-open {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            margin-bottom: 16px;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 400;
+            color: var(--md-sys-color-on-surface);
+        }
+
+        .modal-body {
+            margin-bottom: 24px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .student-info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding: 12px;
+            background-color: var(--md-sys-color-surface-variant);
+            border-radius: 12px;
+        }
+
+        .student-info-item label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--md-sys-color-on-surface-variant);
+            margin-bottom: 4px;
+        }
+
+        .student-info-item span {
+            font-weight: 500;
+        }
+
+        .textarea-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .textarea-group label {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .md-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--md-sys-color-outline);
+            background-color: var(--md-sys-color-surface);
+            color: var(--md-sys-color-on-surface);
+            font-family: 'Roboto', sans-serif;
+            font-size: 1rem;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+
+        .md-textarea:focus {
+            border-color: var(--md-sys-color-primary);
+            border-width: 2px;
+            padding: 11px;
+            outline: none;
+        }
+
+        /* Classe pour cacher visuellement un élément tout en le gardant accessible */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
         @media (max-width: 600px) {
             body {
                 padding: 12px;
@@ -319,7 +435,9 @@
                             {% for topic, scale in topic_scales %}
                                 <th scope="col">{{ topic }} <span class="scale-info">/{{ scale }}</span></th>
                             {% endfor %}
-                            <th scope="col">Actions</th>
+                            <th scope="col">
+                                <span class="visually-hidden">Actions</span>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -352,12 +470,31 @@
                                 {% endfor %}
                                 <td>
                                     <div style="display: flex; gap: 8px;">
+                                        <button type="button"
+                                                class="md-button md-button-text open-appreciation-modal"
+                                                data-id="{{ item.id }}"
+                                                data-student="{{ result.studentName|capitalize }}"
+                                                data-average="{{ result.globalAverage|number_format(2, ',', ' ') }}"
+                                                data-appreciation="{{ item.appreciation }}"
+                                                title="Ajouter une appréciation">
+                                            <span class="material-icons-outlined">comment</span>
+                                            Appréciation
+                                        </button>
+
                                         {% if item.googleDocBulletinLink %}
                                             <a href="{{ item.googleDocBulletinLink }}" target="_blank" rel="noopener noreferrer" class="md-button md-button-text" title="Ouvrir le bulletin">
                                                 <span class="material-icons-outlined">open_in_new</span>
                                                 Ouvrir
                                             </a>
-                                        {% else %}
+                                            {% set delete_params = app.request.query.all|merge({id: item.id}) %}
+                                            <form action="{{ path('app_classroom_result_bulletin_delete', delete_params) }}" method="post" class="delete-bulletin-form">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete-bulletin-' ~ item.id) }}">
+                                                <button type="submit" class="md-button md-button-text" title="Supprimer le bulletin" style="color: #b3261e;" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce bulletin ?');">
+                                                    <span class="material-icons-outlined">delete</span>
+                                                    Supprimer
+                                                </button>
+                                            </form>
+                                        {% elseif item.appreciation is not empty %}
                                             {% set bulletin_params = app.request.query.all|merge({id: item.id}) %}
                                             <a href="{{ path('app_classroom_result_bulletin', bulletin_params) }}"
                                                class="md-button md-button-text generate-bulletin-btn"
@@ -395,9 +532,53 @@
         </footer>
     </div>
 
+    <!-- Modal Appréciation -->
+    <div id="appreciationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter une appréciation</h2>
+            </div>
+            <form id="appreciationForm" method="post">
+                <input type="hidden" name="_token" id="appreciation_token">
+                <div class="modal-body">
+                    <div class="student-info-row">
+                        <div class="student-info-item">
+                            <label>Élève</label>
+                            <span id="modalStudentName">-</span>
+                        </div>
+                        <div class="student-info-item">
+                            <label>Moyenne générale</label>
+                            <span id="modalStudentAverage">-</span>
+                        </div>
+                    </div>
+                    <div class="textarea-group">
+                        <label for="appreciation">Appréciation</label>
+                        <textarea name="appreciation" id="appreciationTextarea" class="md-textarea" placeholder="Saisissez l'appréciation ici..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="md-button md-button-text close-modal">Annuler</button>
+                    <button type="submit" class="md-button">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Fonction pour réinitialiser l'état (utile pour le bouton retour du navigateur)
+        (function() {
+            // Fonctions utilitaires définies une seule fois
+            function disableAllButtons() {
+                const allActionButtons = document.querySelectorAll('.md-button');
+                allActionButtons.forEach(btn => {
+                    if (btn.tagName === 'A') {
+                        btn.style.pointerEvents = 'none';
+                        btn.style.opacity = '0.6';
+                    } else {
+                        btn.disabled = true;
+                    }
+                });
+            }
+
             function resetUI() {
                 const allActionButtons = document.querySelectorAll('.md-button');
                 allActionButtons.forEach(btn => {
@@ -410,30 +591,84 @@
                 });
             }
 
-            // Réinitialiser au chargement (gestion du bfcache)
-            resetUI();
-            window.addEventListener('pageshow', function(event) {
-                resetUI();
-            });
-
-            // Utilisation de la délégation d'événements pour plus de robustesse
+            // Gestionnaire de clic global (délégation)
             document.addEventListener('click', function(e) {
-                const button = e.target.closest('.generate-bulletin-btn');
+                const modal = document.getElementById('appreciationModal');
+                if (!modal) return;
 
-                // Vérifier si le bouton n'est pas déjà "désactivé" par notre style
-                if (button && button.style.pointerEvents !== 'none') {
-                    // Désactiver tous les boutons pour éviter les doubles clics ou actions simultanées
-                    const allActionButtons = document.querySelectorAll('.md-button');
-                    allActionButtons.forEach(btn => {
-                        if (btn.tagName === 'A') {
-                            btn.style.pointerEvents = 'none';
-                            btn.style.opacity = '0.6';
-                        } else {
-                            btn.disabled = true;
-                        }
-                    });
+                const openBtn = e.target.closest('.open-appreciation-modal');
+                if (openBtn) {
+                    const id = openBtn.getAttribute('data-id');
+                    const student = openBtn.getAttribute('data-student');
+                    const average = openBtn.getAttribute('data-average');
+                    const appreciation = openBtn.getAttribute('data-appreciation');
+
+                    document.getElementById('modalStudentName').textContent = student;
+                    document.getElementById('modalStudentAverage').textContent = average + ' / 20';
+                    document.getElementById('appreciationTextarea').value = appreciation;
+
+                    // Récupération du token CSRF depuis l'objet global
+                    if (window.appCsrfTokens && window.appCsrfTokens[id]) {
+                        document.getElementById('appreciation_token').value = window.appCsrfTokens[id];
+                    }
+
+                    // Mise à jour de l'action du formulaire
+                    const form = document.getElementById('appreciationForm');
+                    const currentUrl = new URL(window.location.href);
+                    const searchParams = currentUrl.searchParams;
+                    let actionUrl = "{{ path('app_classroom_result_appreciation', {'id': 'PLACEHOLDER'}) }}".replace('PLACEHOLDER', id);
+
+                    if (searchParams.toString()) {
+                        actionUrl += '?' + searchParams.toString();
+                    }
+
+                    form.action = actionUrl;
+                    modal.style.display = 'flex';
+                }
+
+                // Fermeture de la modale
+                if (e.target.closest('.close-modal') || e.target === modal) {
+                    modal.style.display = 'none';
+                }
+
+                // Désactivation des boutons pour les actions longues
+                const generateBtn = e.target.closest('.generate-bulletin-btn');
+
+                if (generateBtn) {
+                    disableAllButtons();
                 }
             });
-        });
+
+            // Gestionnaire de soumission pour les formulaires (Appréciation et Suppression)
+            document.addEventListener('submit', function(e) {
+                const deleteForm = e.target.closest('.delete-bulletin-form');
+                const appreciationForm = e.target.closest('#appreciationForm');
+
+                if (deleteForm || appreciationForm) {
+                    // Si confirm() renvoie false, la soumission est annulée par le navigateur
+                    // et cet événement 'submit' ne devrait pas aller plus loin ou le défaut est déjà prévenu.
+                    // Cependant, comme Turbo intercepte les soumissions, on s'assure que c'est bien envoyé.
+                    disableAllButtons();
+                    if (appreciationForm) {
+                        const submitBtn = appreciationForm.querySelector('button[type="submit"]');
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Enregistrement...';
+                        }
+                    }
+                }
+            });
+
+            // Initialisation à chaque chargement Turbo
+            document.addEventListener('turbo:load', function() {
+                // On stocke les tokens en global pour qu'ils soient accessibles par le gestionnaire de clic
+                window.appCsrfTokens = {
+                    {% for item in results %}
+                        "{{ item.id }}": "{{ csrf_token('save-appreciation-' ~ item.id) }}",
+                    {% endfor %}
+                };
+
+                resetUI();
+            });
+        })();
     </script>
 {% endblock %}

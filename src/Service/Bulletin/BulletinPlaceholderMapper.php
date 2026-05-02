@@ -33,6 +33,7 @@ class BulletinPlaceholderMapper
             '{{general_average}}' => $this->formatScore($studentAverageResult['globalAverage']),
             '{{total}}' => $this->formatScore($studentAverageResult['globalTotalAverage']),
             '{{rank}}' => $rank > 0 ? (string) $rank : '-',
+            '{{appreciation}}' => $classroomResult->getAppreciation() ?? '',
         ];
 
         $subjectsMapping = [

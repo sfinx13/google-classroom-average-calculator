@@ -6,6 +6,8 @@ namespace App\Command;
 
 use Google\Client;
 use Google\Service\Classroom;
+use Google\Service\Docs;
+use Google\Service\Drive;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -49,6 +51,8 @@ class GenerateRefreshTokenCommand extends Command
         $client->addScope(Classroom::CLASSROOM_TOPICS_READONLY);
         $client->addScope(Classroom::CLASSROOM_ROSTERS_READONLY);
         $client->addScope(Classroom::CLASSROOM_PROFILE_EMAILS);
+        $client->addScope(Docs::DOCUMENTS);
+        $client->addScope(Drive::DRIVE);
         $client->addScope('https://www.googleapis.com/auth/classroom.student-submissions.students.readonly');
 
         $authUrl = $client->createAuthUrl();

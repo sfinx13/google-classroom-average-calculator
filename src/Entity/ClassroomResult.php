@@ -28,6 +28,9 @@ class ClassroomResult
     #[ORM\Column]
     private ?float $average = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?string $googleDocBulletinLink = null;
+
     /**
      * @var array{
      *     studentName: string,
@@ -131,6 +134,18 @@ class ClassroomResult
     public function setAverage(?float $average): static
     {
         $this->average = $average;
+
+        return $this;
+    }
+
+    public function getGoogleDocBulletinLink(): ?string
+    {
+        return $this->googleDocBulletinLink;
+    }
+
+    public function setGoogleDocBulletinLink(?string $googleDocBulletinLink): static
+    {
+        $this->googleDocBulletinLink = $googleDocBulletinLink;
 
         return $this;
     }

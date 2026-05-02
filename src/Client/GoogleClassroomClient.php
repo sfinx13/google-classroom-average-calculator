@@ -11,6 +11,8 @@ use App\Dto\Student;
 use App\Dto\Topic;
 use Google\Client;
 use Google\Service\Classroom;
+use Google\Service\Docs;
+use Google\Service\Drive;
 use Google\Service\Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -18,6 +20,8 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 class GoogleClassroomClient
 {
     private Classroom $service;
+    private Drive $driveService;
+    private Docs $docsService;
 
     /**
      * @throws \JsonException
@@ -40,6 +44,8 @@ class GoogleClassroomClient
         $client->addScope(Classroom::CLASSROOM_TOPICS_READONLY);
         $client->addScope(Classroom::CLASSROOM_ROSTERS_READONLY);
         $client->addScope(Classroom::CLASSROOM_PROFILE_EMAILS);
+        $client->addScope(Docs::DOCUMENTS);
+        $client->addScope(Drive::DRIVE);
         $client->addScope('https://www.googleapis.com/auth/classroom.student-submissions.students.readonly');
 
         $token = $client->fetchAccessTokenWithRefreshToken($refreshToken);
@@ -50,6 +56,18 @@ class GoogleClassroomClient
 
         $client->setAccessToken($token);
         $this->service = new Classroom($client);
+        $this->driveService = new Drive($client);
+        $this->docsService = new Docs($client);
+    }
+
+    public function getDriveService(): Drive
+    {
+        return $this->driveService;
+    }
+
+    public function getDocsService(): Docs
+    {
+        return $this->docsService;
     }
 
     public function getCourse(string $courseId): ?Course

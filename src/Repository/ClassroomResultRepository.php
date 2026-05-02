@@ -23,7 +23,9 @@ class ClassroomResultRepository extends ServiceEntityRepository
      */
     public function findByFilters(?\DateTimeImmutable $startDate, ?\DateTimeImmutable $endDate, ?array $orderBy): array
     {
-        $qb = $this->createQueryBuilder('r');
+        $qb = $this->createQueryBuilder('r')
+            ->leftJoin('r.student', 's')
+            ->addSelect('s');
 
         if ($startDate) {
             $qb->andWhere('r.startDate >= :startDate')
@@ -42,5 +44,41 @@ class ClassroomResultRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findRank(ClassroomResult $classroomResult): int
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->select('r.id', 'r.average')
+            ->innerJoin('r.student', 's')
+            ->where('r.startDate = :startDate')
+            ->andWhere('r.endDate = :endDate')
+            ->andWhere('s.googleClassroomId = :classroomId')
+            ->setParameter('startDate', $classroomResult->getStartDate())
+            ->setParameter('endDate', $classroomResult->getEndDate())
+            ->setParameter('classroomId', $classroomResult->getStudent()->getGoogleClassroomId())
+            ->orderBy('r.average', 'DESC');
+
+        $results = $qb->getQuery()->getResult();
+        $rank = 1;
+        $previousAverage = null;
+
+        foreach ($results as $index => $row) {
+            $average = (float) $row['average'];
+
+            if (null !== $previousAverage && $average < $previousAverage) {
+                $rank = $index + 1;
+            }
+
+            // Dès que l'on retrouve le résultat demandé dans la liste triée,
+            // on retourne le rang calculé pour cette position.
+            if ($row['id'] === $classroomResult->getId()) {
+                return $rank;
+            }
+
+            $previousAverage = $average;
+        }
+
+        return 0;
     }
 }

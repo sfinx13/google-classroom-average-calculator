@@ -26,8 +26,11 @@ class ClassroomResultManager
     /**
      * @throws ExceptionInterface
      */
-    public function retrieveStudentAverageBy(Student $student, \DateTimeImmutable $startDate, \DateTimeImmutable $endDate): ?StudentAverage
-    {
+    public function retrieveStudentAverageBy(
+        Student $student,
+        \DateTimeImmutable $startDate,
+        \DateTimeImmutable $endDate,
+    ): ?StudentAverage {
         $result = $this->classroomResultRepository->findOneBy([
             'student' => $student,
             'startDate' => $startDate,
@@ -57,16 +60,16 @@ class ClassroomResultManager
         ]);
 
         if (!$classroomResult) {
-            $classroomResult = new ClassroomResult();
-            $classroomResult
+            $classroomResult = new ClassroomResult()
                 ->setStudent($student)
                 ->setStartDate($startDate)
                 ->setEndDate($endDate);
         }
 
-        $classroomResult->setAverage($studentAverage->globalAverage);
         $studentAverageNormalized = $this->normalizer->normalize($studentAverage);
-        $classroomResult->setResult($studentAverageNormalized);
+        $classroomResult
+            ->setAverage($studentAverage->globalAverage)
+            ->setResult($studentAverageNormalized);
 
         $this->entityManager->persist($classroomResult);
         $this->entityManager->flush();

@@ -40,6 +40,7 @@ class StudentAverageCalculator
         string $courseId,
         ?\DateTimeImmutable $startDate = null,
         ?\DateTimeImmutable $endDate = null,
+        ?callable $onProgress = null,
     ): StudentAverage {
         $startDate = $startDate ?? new \DateTimeImmutable('1970-01-01');
         $endDate = $endDate ?? new \DateTimeImmutable('2099-12-31');
@@ -64,6 +65,9 @@ class StudentAverageCalculator
             $studentAverageCached = $this->classroomResultManager->retrieveStudentAverageBy($studentEntity, $startDate, $endDate);
             if ($studentAverageCached) {
                 $this->logger->info(sprintf('Returning cached result for student %s', $studentName));
+                if ($onProgress) {
+                    $onProgress(1, 1);
+                }
 
                 return $studentAverageCached;
             }
@@ -89,7 +93,11 @@ class StudentAverageCalculator
             throw new NoGradesFoundException(sprintf('No courseWorks found for dates (%s - %s)', $startDate->format('Y-m-d'), $endDate->format('Y-m-d')));
         }
 
-        $gradesByTopic = $this->normalizeGradesByTopic($filteredCourseWorks, $courseId, $student, $topics);
+        if ($onProgress) {
+            $onProgress(0, count($filteredCourseWorks));
+        }
+
+        $gradesByTopic = $this->normalizeGradesByTopic($filteredCourseWorks, $courseId, $student, $topics, $onProgress);
         if (empty($gradesByTopic)) {
             throw new NoGradesFoundException('No grades found for the specified student and period');
         }
@@ -156,6 +164,7 @@ class StudentAverageCalculator
         string $courseId,
         Student $student,
         array $topics,
+        ?callable $onProgress = null,
     ): array {
         $gradesByTopic = [];
         $topicNames = [];
@@ -163,6 +172,8 @@ class StudentAverageCalculator
             $topicNames[$topic->id] = $topic->name;
         }
         $topicNames['unknown'] = 'Autre';
+
+        $current = 0;
         foreach ($filteredCourseWorks as $courseWork) {
             $submissions = $this->client->getCourseWorkSubmissions($courseId, $courseWork->id, $student->id);
 
@@ -179,6 +190,11 @@ class StudentAverageCalculator
 
                     $gradesByTopic[$topicId][] = $grade;
                 }
+            }
+
+            ++$current;
+            if ($onProgress) {
+                $onProgress($current, count($filteredCourseWorks));
             }
         }
 

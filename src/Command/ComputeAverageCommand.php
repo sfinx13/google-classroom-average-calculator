@@ -81,7 +81,21 @@ class ComputeAverageCommand extends Command
         }
 
         try {
-            $studentAverage = $this->studentAverageCalculator->calculate($student, $courseId, $startDate, $endDate);
+            $progressBar = null;
+            $onProgress = function (int $current, int $total) use ($io, &$progressBar) {
+                if (null === $progressBar) {
+                    $progressBar = $io->createProgressBar($total);
+                    $progressBar->start();
+                }
+                $progressBar->setProgress($current);
+
+                if ($current === $total) {
+                    $progressBar->finish();
+                    $io->newLine(2);
+                }
+            };
+
+            $studentAverage = $this->studentAverageCalculator->calculate($student, $courseId, $startDate, $endDate, $onProgress);
             $io->title(sprintf('Élève : %s', $studentAverage->studentName));
 
             $table = new Table($output);

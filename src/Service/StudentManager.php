@@ -25,13 +25,14 @@ class StudentManager
         ]);
 
         if (!$student) {
-            $student = new Student();
-            $student->setGoogleStudentId($dto->id);
-            $student->setGoogleClassroomId($courseId);
+            $student = new Student()
+                ->setGoogleStudentId($dto->id)
+                ->setGoogleClassroomId($courseId);
         }
 
-        $student->setEmail($dto->email);
-        $student->setFullname($dto->name);
+        $student
+            ->setEmail($dto->email)
+            ->setFullname($dto->name);
 
         $this->entityManager->persist($student);
         $this->entityManager->flush();

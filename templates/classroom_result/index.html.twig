@@ -29,7 +29,6 @@
         }
 
         .container {
-            max-width: 1200px;
             margin: 0 auto;
         }
 
@@ -275,7 +274,7 @@
 
             <div class="filter-group">
                 <div class="input-group">
-                    <label for="sort">Trier par moyenne</label>
+                    <label for="sort">Trier par</label>
                     <select name="sort" id="sort" class="md-select" onchange="this.form.submit()">
                         <option value="none" {{ current_sort == 'none' ? 'selected' : '' }}>Aucun tri</option>
                         <option value="desc" {{ current_sort == 'desc' ? 'selected' : '' }}>Moyenne la plus haute</option>

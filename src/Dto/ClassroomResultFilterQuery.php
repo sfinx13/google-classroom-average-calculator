@@ -19,7 +19,7 @@ class ClassroomResultFilterQuery
         public readonly ?string $sort = 'none',
 
         #[Assert\Choice(choices: ['T1', 'T2', 'T3', null])]
-        public readonly ?string $trimester = null,
+        public ?string $trimester = null,
 
         #[Assert\Date]
         public readonly ?string $startDate = null,
@@ -27,6 +27,15 @@ class ClassroomResultFilterQuery
         #[Assert\Date]
         public readonly ?string $endDate = null,
     ) {
+        if (null === $this->trimester && null === $this->startDate && null === $this->endDate) {
+            $today = date('Y-m-d');
+            foreach (self::TRIMESTERS as $trimester => $dates) {
+                if ($today >= $dates['start'] && $today <= $dates['end']) {
+                    $this->trimester = $trimester;
+                    break;
+                }
+            }
+        }
     }
 
     /**

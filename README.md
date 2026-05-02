@@ -30,13 +30,12 @@ Ce projet apporte une couche de traitement permettant :
 *   Docker et Docker Compose installés.
 *   Un compte Google avec accès à Google Classroom.
 
-### 2. Clonage et initialisation
+### 2. Installer les dépendances
 ```bash
 # Lancer les conteneurs
 docker compose up -d
 ```
 
-# Installer les dépendances
 ```
 composer install
 
@@ -81,7 +80,7 @@ php bin/console app:google:generate-refresh-token
     GOOGLE_REFRESH_TOKEN=votre_refresh_token
     ```
 
-## 📖 Interface et Commandes
+## 💻 Interface et Commandes
 
 ### 🌐 Interface Web
 Une interface de consultation des résultats est disponible pour visualiser les moyennes des élèves.
@@ -126,6 +125,6 @@ Pour lancer les tests unitaires :
 vendor/bin/phpunit
 ```
 
-## Documentation
+## 📚 Documentation
 [La documentation Google Classroom API est disponible](https://developers.google.com/workspace/classroom?hl=fr).
 

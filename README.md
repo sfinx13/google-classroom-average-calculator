@@ -44,25 +44,33 @@ php bin/console doctrine:database:create --if-not-exists
 php bin/console doctrine:migrations:migrate --no-interaction
 ```
 
-### 3. Configuration de l'API Google (Crucial)
+### 3. Configuration Google Cloud & API
 Pour que l'application puisse communiquer avec Google, vous devez configurer vos identifiants dans le fichier `.env`.
 
 #### A. Obtenir le Client ID et le Client Secret
 1.  Allez sur la [Console Google Cloud](https://console.cloud.google.com/).
 2.  Créez un nouveau projet.
-3.  Activez l'API **Google Classroom**.
+3.  Assurez-vous d'avoir bien activé les APIs mentionnées [https://console.cloud.google.com/apis/library](https://console.cloud.google.com/apis/library)
+    :
+    * **Google Classroom API**
+    * **Google Docs API**
+    * **Google Drive API**
 4.  Configurez l'écran de consentement OAuth (choisissez "Externe" ou "Interne" selon vos besoins).
     *   Ajoutez le scope : `https://www.googleapis.com/auth/classroom.courses.readonly`
     *   Ajoutez le scope : `https://www.googleapis.com/auth/classroom.coursework.me.readonly`
     *   Ajoutez le scope : `https://www.googleapis.com/auth/classroom.coursework.students.readonly`
     *   Ajoutez le scope : `https://www.googleapis.com/auth/classroom.topics.readonly`
     *   Ajoutez le scope : `https://www.googleapis.com/auth/classroom.rosters.readonly`
+    *   Ajoutez le scope : `https://www.googleapis.com/auth/drive.file`
+    *   Ajoutez le scope : `https://www.googleapis.com/auth/documents`
 5.  Allez dans **Identifiants** > **Créer des identifiants** > **ID de client OAuth**.
 6.  Sélectionnez **Application de bureau**.
-7.  Copiez votre `Client ID` et votre `Client Secret` dans votre fichier `.env` :
+7.  Copiez votre `Client ID` et votre `Client Secret` dans votre fichier `.env` du projet :
     ```env
     GOOGLE_CLIENT_ID=votre_id
     GOOGLE_CLIENT_SECRET=votre_secret
+    GOOGLE_BULLETIN_TEMPLATE_DOCUMENT_ID=id_du_document_modele
+    GOOGLE_BULLETIN_OUTPUT_FOLDER_ID=id_du_dossier_de_destination
     ```
 
 #### B. Générer le Refresh Token
@@ -88,6 +96,13 @@ Une interface de consultation des résultats est disponible pour visualiser les 
 symfony server:start -d
 ```
 - **Accès** : http://127.0.0.1:8001/
+
+### 📄 Génération des Bulletins
+L'application permet de générer des bulletins scolaires au format Google Docs à partir d'un modèle.
+
+1.  **Préparation du modèle** : Créez un Google Doc contenant des placeholders comme `{{student_fullname}}`, `{{lecture_average}}`, `{{rank}}`, etc.
+2.  **Configuration** : Renseignez `GOOGLE_BULLETIN_TEMPLATE_DOCUMENT_ID` et `GOOGLE_BULLETIN_OUTPUT_FOLDER_ID` dans votre `.env`.
+3.  **Génération** : Depuis l'interface web, cliquez sur le bouton "Bulletin" en face d'un élève.
 
 ### 🏫 Gestion des classes et élèves
 

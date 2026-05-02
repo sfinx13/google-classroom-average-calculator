@@ -5,7 +5,7 @@ Ce projet répond à plusieurs limites fonctionnelles de Google Classroom dans l
 En particulier :
 
 - **Absence de périodes pédagogiques personnalisables** : Google Classroom ne permet pas de définir des périodes d’évaluation (par exemple : trimestre, semestre ou période libre) basées sur une plage de dates. Cela limite la capacité à analyser les résultats sur des segments temporels cohérents.
-- **Manque de flexibilité dans le calcul des moyennes** : Les moyennes sont généralement exprimées en pourcentage ou dépendantes de la configuration des devoirs, ce qui ne correspond pas toujours aux systèmes de notation utilisés (ex : notes sur 10, 20, 40, etc.).
+- **Manque de flexibilité dans le calcul des moyennes** : Les moyennes sont généralement exprimées en pourcentage, ce qui ne correspond aux systèmes de notation utilisés (ex : notes sur 10, 20, 40, etc.).
 - **Absence de normalisation des résultats** : Il n’existe pas de mécanisme natif permettant d’agréger et de normaliser les notes provenant de devoirs hétérogènes afin de produire une moyenne cohérente et comparable.
 
 Ce projet apporte une couche de traitement permettant :
@@ -20,9 +20,9 @@ Ce projet apporte une couche de traitement permettant :
 *   **Symfony 8.x**
 *   **MySQL 8.0**
 *   **Docker & Docker Compose**
-*   **Google Classroom API** (via `google/apiclient`) 
-*   **PHPUnit** (pour les tests)
+*   **Google Classroom API**
 *   **Material Design 3**
+*   **PHPUnit**
 
 ## 🛠 Installation et Configuration
 
@@ -127,4 +127,5 @@ vendor/bin/phpunit
 
 ## 📚 Documentation
 [La documentation Google Classroom API est disponible](https://developers.google.com/workspace/classroom?hl=fr).
+[Google APIs Client Library for PHP](https://github.com/googleapis/google-api-php-client)
 

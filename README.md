@@ -126,5 +126,5 @@ vendor/bin/phpunit
 ```
 
 ## 📚 Documentation
-- [La documentation Google Classroom API est disponible](https://developers.google.com/workspace/classroom?hl=fr)
+- [Documentation Google Classroom API](https://developers.google.com/workspace/classroom?hl=fr)
 - [Google APIs Client Library for PHP](https://github.com/googleapis/google-api-php-client)

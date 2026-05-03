@@ -4,21 +4,22 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
+use App\Utils\TrimesterHelper;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class ClassroomResultFilterQuery
 {
     public const array TRIMESTERS = [
-        'T1' => ['start' => '2025-09-01', 'end' => '2025-12-31'],
+        'T1' => ['start' => '2025-10-01', 'end' => '2025-12-31'],
         'T2' => ['start' => '2026-01-01', 'end' => '2026-04-30'],
         'T3' => ['start' => '2026-05-01', 'end' => '2026-07-31'],
     ];
 
     public function __construct(
-        #[Assert\Choice(choices: ['none', 'asc', 'desc'])]
-        public readonly ?string $sort = 'none',
+        #[Assert\Choice(choices: ['r.average-asc', 'r.average-desc', 's.fullname-asc', 's.fullname-desc'])]
+        public readonly ?string $sort = 's.fullname-asc',
 
-        #[Assert\Choice(choices: ['T1', 'T2', 'T3', null])]
+        #[Assert\Choice(choices: ['T1', 'T2', 'T3', 'none'])]
         public ?string $trimester = null,
 
         #[Assert\Date]
@@ -29,12 +30,7 @@ class ClassroomResultFilterQuery
     ) {
         if (null === $this->trimester && null === $this->startDate && null === $this->endDate) {
             $today = date('Y-m-d');
-            foreach (self::TRIMESTERS as $trimester => $dates) {
-                if ($today >= $dates['start'] && $today <= $dates['end']) {
-                    $this->trimester = $trimester;
-                    break;
-                }
-            }
+            $this->trimester = 'T'.TrimesterHelper::getTrimester($today);
         }
     }
 
@@ -91,12 +87,14 @@ class ClassroomResultFilterQuery
      */
     public function getOrderBy(): ?array
     {
-        if ('desc' === $this->sort) {
-            return ['average' => 'DESC'];
+        [$column, $sort] = explode('-', $this->sort);
+
+        if ('desc' === $sort) {
+            return [$column => 'DESC'];
         }
 
-        if ('asc' === $this->sort) {
-            return ['average' => 'ASC'];
+        if ('asc' === $sort) {
+            return [$column => 'ASC'];
         }
 
         return null;

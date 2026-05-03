@@ -39,7 +39,7 @@ class ClassroomResultRepository extends ServiceEntityRepository
 
         if ($orderBy) {
             foreach ($orderBy as $field => $direction) {
-                $qb->addOrderBy('r.'.$field, $direction);
+                $qb->addOrderBy($field, $direction);
             }
         }
 

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Service\Bulletin;
 
 use App\Client\GoogleClassroomClient;
-use App\Dto\ClassroomResultFilterQuery;
 use App\Entity\ClassroomResult;
+use App\Utils\TrimesterHelper;
 use Google\Service\Docs\BatchUpdateDocumentRequest;
 use Google\Service\Docs\Request;
 use Google\Service\Drive\DriveFile;
@@ -37,16 +37,10 @@ class BulletinGoogleDocGenerator
         $placeholders = $this->placeholderMapper->map($classroomResult);
         $studentName = $classroomResult->getStudent()?->getFullname();
 
-        $periodLabel = 'Bulletin';
         $startDateStr = $classroomResult->getStartDate()->format('Y-m-d');
-        foreach (ClassroomResultFilterQuery::TRIMESTERS as $trimester => $dates) {
-            if ($dates['start'] === $startDateStr) {
-                $periodLabel = $trimester;
-                break;
-            }
-        }
+        $periodLabel = TrimesterHelper::getTrimester($startDateStr);
 
-        $fileName = sprintf('Bulletin - %s - %s', $studentName, $periodLabel);
+        $fileName = sprintf('Bulletin - %s - T%s', $studentName, $periodLabel);
         $this->logger->info(sprintf('Generating bulletin for %s', $studentName));
 
         $driveService = $this->googleClient->getDriveService();

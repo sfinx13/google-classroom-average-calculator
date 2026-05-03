@@ -55,7 +55,7 @@
                     <div class="filter-item">
                         <label for="trimester" class="filter-label">Période :</label>
                         <select name="trimester" id="trimester" class="classroom-select" onchange="this.form.submit()">
-                            <option value="" {{ current_trimester is empty ? 'selected' : '' }}>Toutes les périodes</option>
+                            <option value="none" {{ current_trimester is empty ? 'selected' : '' }}>Toutes les périodes</option>
                             <option value="T1" {{ current_trimester == 'T1' ? 'selected' : '' }}>Trimestre 1</option>
                             <option value="T2" {{ current_trimester == 'T2' ? 'selected' : '' }}>Trimestre 2</option>
                             <option value="T3" {{ current_trimester == 'T3' ? 'selected' : '' }}>Trimestre 3</option>
@@ -65,9 +65,10 @@
                     <div class="filter-item">
                         <label for="sort" class="filter-label">Trier par :</label>
                         <select name="sort" id="sort" class="classroom-select" onchange="this.form.submit()">
-                            <option value="none" {{ current_sort == 'none' ? 'selected' : '' }}>Ordre alphabétique</option>
-                            <option value="desc" {{ current_sort == 'desc' ? 'selected' : '' }}>Moyenne la plus haute</option>
-                            <option value="asc" {{ current_sort == 'asc' ? 'selected' : '' }}>Moyenne la plus basse</option>
+                            <option value="s.fullname-asc" {{ current_sort == 's.fullname-asc' ? 'selected' : '' }}>Ordre alphabétique (A->Z)</option>
+                            <option value="s.fullname-desc" {{ current_sort == 's.fullname-desc' ? 'selected' : '' }}>Ordre alphabétique (Z->A)</option>
+                            <option value="r.average-desc" {{ current_sort == 'r.average-desc' ? 'selected' : '' }}>Moyenne la plus haute</option>
+                            <option value="r.average-asc" {{ current_sort == 'r.average-asc' ? 'selected' : '' }}>Moyenne la plus basse</option>
                         </select>
                     </div>
 
@@ -164,7 +165,7 @@
                             <tr>
                                 <td colspan="{{ topic_scales|length + 3 }}" style="text-align: center; padding: 48px; color: var(--classroom-text-secondary);">
                                     <span class="material-icons-outlined" style="font-size: 48px; display: block; margin-bottom: 16px;">info</span>
-                                    Aucun résultat disponible pour cette période.
+                                    Aucun résultat disponible pour cette période.({{ current_trimester }})
                                 </td>
                             </tr>
                         {% endfor %}

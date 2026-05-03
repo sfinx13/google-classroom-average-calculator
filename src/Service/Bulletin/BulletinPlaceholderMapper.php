@@ -6,6 +6,7 @@ namespace App\Service\Bulletin;
 
 use App\Entity\ClassroomResult;
 use App\Repository\ClassroomResultRepository;
+use App\Utils\TrimesterHelper;
 
 class BulletinPlaceholderMapper
 {
@@ -27,6 +28,7 @@ class BulletinPlaceholderMapper
         $rank = $this->classroomResultRepository->findRank($classroomResult);
 
         $placeholders = [
+            '{{numero_periode}}' => TrimesterHelper::getTrimester($classroomResult->getStartDate()->format('Y-m-d')),
             '{{start_date}}' => $classroomResult->getStartDate()->format('d/m/Y'),
             '{{end_date}}' => $classroomResult->getEndDate()->format('d/m/Y'),
             '{{student_fullname}}' => mb_convert_case($studentAverageResult['studentName'], MB_CASE_TITLE, 'UTF-8'),

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Client\GoogleClassroomClient;
 use App\Dto\ClassroomResultFilterQuery;
 use App\Entity\ClassroomResult;
 use App\Entity\Enum\Topic;
@@ -24,6 +25,7 @@ class ClassroomResultController extends AbstractController
     #[Route('/', name: 'app_classroom_results')]
     public function index(
         ClassroomResultRepository $classroomResultRepository,
+        GoogleClassroomClient $googleClassroomClient,
         #[MapQueryString] ?ClassroomResultFilterQuery $filterQuery,
     ): Response {
         $filterQuery ??= new ClassroomResultFilterQuery();
@@ -33,6 +35,18 @@ class ClassroomResultController extends AbstractController
             $filterQuery->getOrderBy()
         );
 
+        $courseName = 'Tous les cours';
+        if (!empty($results)) {
+            $firstResult = $results[0];
+            $classroomId = $firstResult->getStudent()?->getGoogleClassroomId();
+            if ($classroomId) {
+                $course = $googleClassroomClient->getCourse($classroomId);
+                if ($course) {
+                    $courseName = $course->name;
+                }
+            }
+        }
+
         return $this->render('classroom_result/index.html.twig', [
             'results' => $results,
             'topic_scales' => Topic::scales(),
@@ -40,6 +54,7 @@ class ClassroomResultController extends AbstractController
             'current_trimester' => $filterQuery->trimester,
             'start_date' => $filterQuery->startDate,
             'end_date' => $filterQuery->endDate,
+            'course_name' => $courseName,
         ]);
     }
 

@@ -16,6 +16,7 @@ Ce projet apporte une couche de traitement permettant :
 
 ## 🚀 Technologies utilisées
 
+*   **FrankenPHP**
 *   **PHP 8.4** 
 *   **Symfony 8.x**
 *   **MySQL 8.0**
@@ -33,15 +34,7 @@ Ce projet apporte une couche de traitement permettant :
 ### 2. Installer les dépendances
 ```bash
 # Lancer les conteneurs
-docker compose up -d
-```
-
-```
-composer install
-
-# Créer la base de données et lancer les migrations
-php bin/console doctrine:database:create --if-not-exists
-php bin/console doctrine:migrations:migrate --no-interaction
+make build
 ```
 
 ### 3. Configuration Google Cloud & API
@@ -90,12 +83,14 @@ php bin/console app:google:generate-refresh-token
 
 ## 💻 Interface et Commandes
 
-### 🌐 Interface Web
-Une interface de consultation des résultats est disponible pour visualiser les moyennes des élèves.
+#### Démarrage
+
+```bash
+make run
 ```
-symfony server:start -d
-```
-- **Accès** : http://127.0.0.1:8001/
+
+L’application est disponible sur : http://localhost:8001
+
 
 ### 📄 Génération des Bulletins
 L'application permet de générer des bulletins scolaires au format Google Docs à partir d'un modèle.
@@ -133,12 +128,6 @@ php bin/console app:classroom:compute-average "Nom de l'élève" --courseId=[ID]
 *   `--end-date` : Date de fin (format Y-m-d, ex: 2025-03-31).
 
 > **Note sur le cache :** Si un calcul a déjà été effectué pour un élève sur la même période, l'application récupérera le résultat en base de données au lieu d'appeler l'API Google.
-
-## 🧪 Tests
-Pour lancer les tests unitaires :
-```bash
-vendor/bin/phpunit
-```
 
 ## 📚 Documentation
 - [Documentation Google Classroom API](https://developers.google.com/workspace/classroom?hl=fr)

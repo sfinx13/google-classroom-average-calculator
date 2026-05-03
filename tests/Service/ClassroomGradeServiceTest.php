@@ -18,6 +18,7 @@ use App\Service\StudentAverageCalculator;
 use Google\Service\Exception;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 class ClassroomGradeServiceTest extends TestCase
 {
@@ -25,14 +26,14 @@ class ClassroomGradeServiceTest extends TestCase
      * @throws NoGradesFoundException
      * @throws StudentNotFoundException
      * @throws Exception
-     * @throws \DateMalformedStringException
+     * @throws \DateMalformedStringException|ExceptionInterface
      */
     public function testComputeStudentAverage(): void
     {
         $client = $this->createMock(GoogleClassroomClient::class);
-        $resultManager = $this->createMock(ClassroomResultManager::class);
-        $studentRepository = $this->createMock(StudentRepository::class);
-        $logger = $this->createMock(LoggerInterface::class);
+        $resultManager = $this->createStub(ClassroomResultManager::class);
+        $studentRepository = $this->createStub(StudentRepository::class);
+        $logger = $this->createStub(LoggerInterface::class);
 
         $courseId = 'course123';
         $studentId = 'student@example.com';
@@ -97,14 +98,14 @@ class ClassroomGradeServiceTest extends TestCase
      * @throws \DateMalformedStringException
      * @throws Exception
      * @throws NoGradesFoundException
-     * @throws StudentNotFoundException
+     * @throws StudentNotFoundException|ExceptionInterface
      */
     public function testComputeStudentAverageWithDateFilter(): void
     {
         $client = $this->createMock(GoogleClassroomClient::class);
-        $resultManager = $this->createMock(ClassroomResultManager::class);
-        $studentRepository = $this->createMock(StudentRepository::class);
-        $logger = $this->createMock(LoggerInterface::class);
+        $resultManager = $this->createStub(ClassroomResultManager::class);
+        $studentRepository = $this->createStub(StudentRepository::class);
+        $logger = $this->createStub(LoggerInterface::class);
 
         $courseId = 'course123';
         $studentId = 'student@example.com';

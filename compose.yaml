@@ -1,5 +1,25 @@
 
 services:
+  php:
+    build:
+      context: .
+      dockerfile: .docker/frankenphp/Dockerfile
+    ports:
+      - "8001:80" # HTTP
+    volumes:
+      - .:/app
+      - ./Caddyfile:/etc/frankenphp/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    tty: true
+    environment:
+      - DATABASE_URL=mysql://app:password@database:3306/app
+      - APP_ENV=dev
+      - APP_SECRET=abcdef123456
+      - CADDY_GLOBAL_OPTIONS=auto_https off
+    depends_on:
+      - database
+
   database:
     image: mysql:8.0.32
     environment:
@@ -14,3 +34,5 @@ services:
 
 volumes:
   db-data:
+  caddy_data:
+  caddy_config:

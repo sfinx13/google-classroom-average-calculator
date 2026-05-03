@@ -1,4 +1,6 @@
 {
+    "name": "saidi/google-classroom-average",
+    "description": "App de calcul de moyennes et génération de bulletins à partir de Google Classroom.",
     "type": "project",
     "license": "proprietary",
     "minimum-stability": "stable",
@@ -92,7 +94,16 @@
         "cs:fix": "php-cs-fixer fix",
         "cs:check": "php-cs-fixer fix --dry-run --diff",
         "stan": "phpstan analyse",
-        "stan:clear": "phpstan clear-result-cache"
+        "stan:clear": "phpstan clear-result-cache",
+        "ci": [
+            "composer validate --strict",
+            "php bin/console lint:yaml config",
+            "php bin/console lint:twig templates",
+            "php bin/console lint:container",
+            "composer cs:check",
+            "composer stan",
+            "vendor/bin/phpunit"
+        ]
     },
     "conflict": {
         "symfony/symfony": "*"

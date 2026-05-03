@@ -320,6 +320,79 @@
             font-weight: 500;
         }
 
+        /* Mode masqué */
+        .is-masked .student-name,
+        .is-masked .average-global,
+        .is-masked td:not(.student-name):not(:last-child) {
+            filter: blur(6px);
+            transition: filter 0.3s ease;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /* Toggle Switch M3 Styles */
+        .m3-switch {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+
+        .m3-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .m3-switch-track {
+            width: 52px;
+            height: 32px;
+            background-color: var(--md-sys-color-surface-variant);
+            border: 2px solid var(--md-sys-color-outline);
+            border-radius: 16px;
+            position: relative;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .m3-switch-thumb {
+            width: 16px;
+            height: 16px;
+            background-color: var(--md-sys-color-outline);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 6px;
+            transform: translateY(-50%);
+            transition: transform 0.2s, width 0.2s, height 0.2s, background-color 0.2s;
+        }
+
+        .m3-switch input:checked + .m3-switch-track {
+            background-color: var(--md-sys-color-primary);
+            border-color: var(--md-sys-color-primary);
+        }
+
+        .m3-switch input:checked + .m3-switch-track .m3-switch-thumb {
+            transform: translate(20px, -50%);
+            width: 24px;
+            height: 24px;
+            background-color: var(--md-sys-color-on-primary);
+            left: 4px;
+        }
+
+        .m3-switch input:focus-visible + .m3-switch-track {
+            outline: 2px solid var(--md-sys-color-primary);
+            outline-offset: 2px;
+        }
+
+        .m3-switch-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--md-sys-color-on-surface);
+        }
+
         .textarea-group {
             display: flex;
             flex-direction: column;
@@ -377,8 +450,18 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container">
-        <h1>Résultats des élèves</h1>
+    <div class="container" data-controller="mask">
+        <div class="header-container">
+            <h1>Relevé de notes</h1>
+
+            <label class="m3-switch">
+                <input type="checkbox" role="switch" aria-checked="false" data-action="change->mask#toggle">
+                <span class="m3-switch-track">
+                    <span class="m3-switch-thumb"></span>
+                </span>
+                <span class="m3-switch-label">Masquer les informations sensibles</span>
+            </label>
+        </div>
 
         {% for message in app.flashes('error') %}
             <div style="background-color: #f8d7da; color: #721c24; padding: 16px; border-radius: 8px; margin-bottom: 24px; border: 1px solid #f5c6cb; display: flex; align-items: center; gap: 8px;">
@@ -425,7 +508,7 @@
             </div>
         </form>
 
-        <div class="surface-container">
+        <div class="surface-container" data-mask-target="container">
             <div class="table-wrapper">
                 <table aria-label="Tableau des résultats des élèves">
                     <thead>

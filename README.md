@@ -20,7 +20,7 @@ Ce projet apporte une couche de traitement permettant :
 *   **Symfony 8.x**
 *   **MySQL 8.0**
 *   **Docker & Docker Compose**
-*   **Google Classroom API**
+*   **Google Classroom API, Google Docs API, Google Drive API**
 *   **Material Design 3**
 *   **PHPUnit**
 

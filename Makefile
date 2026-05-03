@@ -1,4 +1,4 @@
-.PHONY: help build run stop test ci
+.PHONY: help build run stop test ci stan cs-fix
 
 .DEFAULT_GOAL := help
 
@@ -25,6 +25,14 @@ down: ## Stoppe les conteneurs Docker
 test: ## Lance les tests PHPUnit
 	@echo "Exécution des tests PHPUnit..."
 	vendor/bin/phpunit --display-phpunit-notices
+
+stan: ## Lance PHPStan
+	@echo "Exécution de PHPStan..."
+	composer stan
+
+cs-fix: ## Lance PHP-CS-Fixer
+	@echo "Exécution de PHP-CS-Fixer..."
+	composer cs:fix
 
 ci:  ## Lance toutes les steps de la CI
 	@echo "Lancement de la CI..."

@@ -10,6 +10,15 @@ class TrimesterHelper
 {
     public static function getTrimester(string $startDate): ?string
     {
-        return substr((string) array_find_key(ClassroomResultFilterQuery::TRIMESTERS, fn ($dates) => $startDate > $dates['start'] && $startDate < $dates['end']), 1);
+        $key = array_find_key(
+            ClassroomResultFilterQuery::TRIMESTERS,
+            fn ($dates) => $startDate >= $dates['start'] && $startDate <= $dates['end']
+        );
+
+        if (null === $key) {
+            return null;
+        }
+
+        return substr((string) $key, 1);
     }
 }

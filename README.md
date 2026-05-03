@@ -16,16 +16,16 @@ Ce projet apporte une couche de traitement permettant :
 - de calculer des moyennes adaptées au contexte pédagogique
 
 
-## 🚀 Technologies utilisées
+## 🚀 Environnement technique
 
-*   **FrankenPHP**
-*   **PHP 8.4** 
-*   **Symfony 8.x**
-*   **MySQL 8.0**
-*   **Docker & Docker Compose**
-*   **Google Classroom API, Google Docs API, Google Drive API**
-*   **Material Design 3**
-*   **PHPUnit**
+| Technologie | Version |
+|---|---------|
+| [FrankenPHP](https://frankenphp.dev/) | 1.12.x  |
+| [PHP](https://www.php.net/) | 8.4.x   |
+| [Symfony](https://symfony.com/) | 8.x     |
+| [MySQL](https://www.mysql.com/) | 8.x     |
+| [PHPUnit](https://phpunit.de/) | 13      |
+| [Google Classroom API](https://developers.google.com/classroom), [Google Docs API](https://developers.google.com/docs/api), [Google Drive API](https://developers.google.com/drive/api) | —       |
 
 ## 🛠 Installation et Configuration
 

@@ -1,3 +1,478 @@
+:root {
+    --classroom-primary: #1967d2;
+    --classroom-text: #3c4043;
+    --classroom-text-secondary: #5f6368;
+    --classroom-border: #dadce0;
+    --classroom-bg: #f8f9fa;
+    --classroom-surface: #ffffff;
+
+    --md-sys-color-primary: var(--classroom-primary);
+    --md-sys-color-on-primary: #FFFFFF;
+    --md-sys-color-primary-container: #E8F0FE;
+    --md-sys-color-on-primary-container: #1967d2;
+    --md-sys-color-surface: var(--classroom-surface);
+    --md-sys-color-on-surface: var(--classroom-text);
+    --md-sys-color-surface-variant: #f1f3f4;
+    --md-sys-color-on-surface-variant: var(--classroom-text-secondary);
+    --md-sys-color-outline: var(--classroom-border);
+}
+
 body {
-    background-color: skyblue;
+    font-family: 'Roboto', 'Google Sans', Arial, sans-serif;
+    background-color: var(--classroom-bg);
+    color: var(--classroom-text);
+    margin: 0;
+    padding: 0;
+}
+
+/* Classroom Style Header */
+.classroom-header {
+    background-color: var(--classroom-surface);
+    border-bottom: 1px solid var(--classroom-border);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.course-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.course-name {
+    font-family: 'Google Sans', sans-serif;
+    font-size: 1.375rem;
+    color: var(--classroom-text);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.course-period {
+    font-size: 0.875rem;
+    color: var(--classroom-text-secondary);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Main Layout */
+.main-container {
+    margin: 32px 24px;
+}
+
+/* Cards */
+.classroom-card {
+    background-color: var(--classroom-surface);
+    border: 1px solid var(--classroom-border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.card-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--classroom-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-title {
+    font-family: 'Google Sans', sans-serif;
+    font-size: 1.125rem;
+    font-weight: 500;
+    margin: 0;
+    color: var(--classroom-primary);
+}
+
+/* Filter bar */
+.filter-bar {
+    display: flex;
+    gap: 16px;
+    padding: 12px 24px;
+    background-color: var(--md-sys-color-surface-variant);
+    border-bottom: 1px solid var(--classroom-border);
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filter-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--classroom-text-secondary);
+}
+
+/* Custom Inputs */
+.classroom-select {
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--classroom-border);
+    background-color: var(--classroom-surface);
+    color: var(--classroom-text);
+    font-size: 0.875rem;
+    cursor: pointer;
+    outline: none;
+}
+
+.classroom-select:focus {
+    border-color: var(--classroom-primary);
+    box-shadow: inset 0 0 0 1px var(--classroom-primary);
+}
+
+/* Table */
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+th {
+    padding: 12px 24px;
+    font-weight: 500;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--classroom-text-secondary);
+    border-bottom: 1px solid var(--classroom-border);
+}
+
+td {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--classroom-border);
+    font-size: 0.875rem;
+    color: var(--classroom-text);
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tr:hover {
+    background-color: #f1f3f4;
+}
+
+.student-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.student-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--classroom-primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+.student-name {
+    font-weight: 500;
+}
+
+.average-badge {
+    font-weight: 700;
+    color: var(--classroom-primary);
+    background-color: var(--md-sys-color-primary-container);
+    padding: 4px 10px;
+    border-radius: 16px;
+    display: inline-block;
+}
+
+.empty-cell {
+    color: var(--classroom-text-secondary);
+    font-style: italic;
+}
+
+.scale-info {
+    font-size: 0.7rem;
+    color: var(--classroom-text-secondary);
+    font-weight: 400;
+    margin-left: 2px;
+}
+
+/* Buttons */
+.md-button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: 1px solid var(--classroom-border);
+    background-color: var(--classroom-surface);
+    color: var(--classroom-primary);
+    font-family: 'Google Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.md-button:hover {
+    background-color: #f1f3f4;
+}
+
+.md-button-primary {
+    background-color: var(--classroom-primary);
+    color: white;
+    border: none;
+}
+
+.md-button-primary:hover {
+    background-color: #185abc;
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,.30), 0 1px 3px 1px rgba(60,64,67,.15);
+}
+
+.md-button-text {
+    border: none;
+    background: none;
+}
+
+.md-button-text:hover {
+    background-color: rgba(25, 103, 210, 0.04);
+}
+
+.action-icon {
+    color: var(--classroom-text-secondary);
+}
+
+/* Toggle Switch M3 Styles - Adapted for Classroom */
+.m3-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+}
+
+.m3-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+.m3-switch-track {
+    width: 36px;
+    height: 20px;
+    background-color: #bdc1c6;
+    border-radius: 10px;
+    position: relative;
+    transition: background-color 0.2s;
+}
+
+.m3-switch-thumb {
+    width: 12px;
+    height: 12px;
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    transition: transform 0.2s;
+}
+
+.m3-switch input:checked + .m3-switch-track {
+    background-color: var(--classroom-primary);
+}
+
+.m3-switch input:checked + .m3-switch-track .m3-switch-thumb {
+    transform: translateX(16px);
+}
+
+.m3-switch-label {
+    font-size: 0.875rem;
+    color: var(--classroom-text-secondary);
+}
+
+/* Mode masqué */
+.table-wrapper {
+    position: relative;
+}
+
+.is-masked-overlay {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(25, 103, 210, 0.9);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-family: 'Google Sans', sans-serif;
+    font-size: 0.875rem;
+    z-index: 10;
+    pointer-events: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.is-masked .is-masked-overlay {
+    display: block;
+}
+
+.is-masked .course-name,
+.is-masked .student-name,
+.is-masked .average-badge,
+.is-masked .student-avatar,
+.is-masked .grade-cell {
+    filter: blur(6px);
+    transition: filter 0.3s ease;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 24px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 24px 38px 3px rgba(0,0,0,.14), 0 9px 46px 8px rgba(0,0,0,.12), 0 11px 15px -7px rgba(0,0,0,.2);
+}
+
+.modal-header h2 {
+    margin: 0 0 16px 0;
+    font-family: 'Google Sans', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 400;
+}
+
+.md-textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 12px;
+    border-radius: 4px;
+    border: 1px solid var(--classroom-border);
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    resize: vertical;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.md-textarea:focus {
+    border-color: var(--classroom-primary);
+    box-shadow: inset 0 0 0 1px var(--classroom-primary);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 24px;
+}
+
+.student-info-row {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--classroom-border);
+}
+
+.student-info-item label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--classroom-text-secondary);
+    margin-bottom: 4px;
+}
+
+.student-info-item span {
+    font-weight: 500;
+}
+
+/* Flash messages */
+.flash {
+    padding: 12px 24px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.875rem;
+}
+
+.flash-error {
+    background-color: #fce8e6;
+    color: #d93025;
+    border: 1px solid #fad2cf;
+}
+
+.flash-success {
+    background-color: #e6f4ea;
+    color: #1e8e3e;
+    border: 1px solid #ceead6;
+}
+
+/* Footer */
+.footer {
+    margin: 48px auto 24px;
+    text-align: center;
+    color: var(--classroom-text-secondary);
+    font-size: 0.75rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+}
+
+.footer a {
+    color: var(--classroom-primary);
+    text-decoration: none;
+}
+
+@media (max-width: 600px) {
+    .classroom-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    .header-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
 }

@@ -1,5 +1,7 @@
 # Google Classroom Average Calculator
 
+![Aperçu de l'application](assets/images/app.png)
+
 Ce projet répond à plusieurs limites fonctionnelles de Google Classroom dans le cadre du suivi pédagogique des élèves.
 
 En particulier :
@@ -33,7 +35,6 @@ Ce projet apporte une couche de traitement permettant :
 
 ### 2. Installer les dépendances
 ```bash
-# Lancer les conteneurs
 make build
 ```
 
@@ -91,7 +92,6 @@ make run
 
 L’application est disponible sur : http://localhost:8001
 
-
 ### 📄 Génération des Bulletins
 L'application permet de générer des bulletins scolaires au format Google Docs à partir d'un modèle.
 
@@ -112,20 +112,14 @@ Affiche les élèves d'un cours spécifique et les enregistre/met à jour en bas
 ```bash
 php bin/console app:classroom:list-students [courseId]
 ```
-*   `courseId` : L'ID du cours (ex: 809867299753).
 
 ### 📊 Calcul des moyennes
 
 #### Calculer la moyenne d'un élève
 Calcule la moyenne par matière et la moyenne générale.
 ```bash
-php bin/console app:classroom:compute-average "Nom de l'élève" --courseId=[ID]
+php bin/console app:classroom:compute-average "Nom de l'élève" --courseId=[ID] --start-date=[DATE_DEBUT] --end-date=[DATE_FIN]
 ```
-
-**Options :**
-*   `--courseId` : ID du cours Google Classroom.
-*   `--start-date` : Date de début (format Y-m-d, ex: 2025-01-01).
-*   `--end-date` : Date de fin (format Y-m-d, ex: 2025-03-31).
 
 > **Note sur le cache :** Si un calcul a déjà été effectué pour un élève sur la même période, l'application récupérera le résultat en base de données au lieu d'appeler l'API Google.
 

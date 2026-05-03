@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Service\Bulletin;
+namespace App\Service\Google\Bulletin;
 
-use App\Client\GoogleClassroomClient;
 use App\Entity\ClassroomResult;
+use App\Service\Google\GoogleClassroomService;
 use App\Utils\TrimesterHelper;
 use Google\Service\Docs\BatchUpdateDocumentRequest;
 use Google\Service\Docs\Request;
@@ -14,11 +14,11 @@ use Google\Service\Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-class BulletinGoogleDocGenerator
+class GoogleDocGenerator
 {
     public function __construct(
-        private readonly GoogleClassroomClient $googleClient,
-        private readonly BulletinPlaceholderMapper $placeholderMapper,
+        private readonly GoogleClassroomService $googleClassroomService,
+        private readonly PlaceholderMapper $placeholderMapper,
         private readonly LoggerInterface $logger,
         #[Autowire('%env(GOOGLE_BULLETIN_TEMPLATE_DOCUMENT_ID)%')]
         private readonly string $templateId,
@@ -43,7 +43,7 @@ class BulletinGoogleDocGenerator
         $fileName = sprintf('Bulletin - %s - T%s', $studentName, $periodLabel);
         $this->logger->info(sprintf('Generating bulletin for %s', $studentName));
 
-        $driveService = $this->googleClient->getDriveService();
+        $driveService = $this->googleClassroomService->getDriveService();
         $copy = new DriveFile([
             'name' => $fileName,
             'parents' => [$this->outputFolderId],
@@ -69,7 +69,7 @@ class BulletinGoogleDocGenerator
             $batchUpdateRequest = new BatchUpdateDocumentRequest([
                 'requests' => $requests,
             ]);
-            $this->googleClient->getDocsService()->documents->batchUpdate($documentId, $batchUpdateRequest);
+            $this->googleClassroomService->getDocsService()->documents->batchUpdate($documentId, $batchUpdateRequest);
         }
 
         return [
@@ -84,7 +84,7 @@ class BulletinGoogleDocGenerator
     public function delete(string $documentId): void
     {
         $this->logger->info(sprintf('Deleting bulletin with ID %s', $documentId));
-        $driveService = $this->googleClient->getDriveService();
+        $driveService = $this->googleClassroomService->getDriveService();
         $driveService->files->delete($documentId);
     }
 }

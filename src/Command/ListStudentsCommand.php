@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Client\GoogleClassroomClient;
-use App\Service\StudentManager;
+use App\Service\Google\GoogleClassroomService;
+use App\Service\Manager\StudentManager;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
@@ -21,7 +21,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class ListStudentsCommand extends Command
 {
     public function __construct(
-        private readonly GoogleClassroomClient $client,
+        private readonly GoogleClassroomService $googleClassroomService,
         private readonly StudentManager $studentManager,
     ) {
         parent::__construct();
@@ -40,7 +40,7 @@ class ListStudentsCommand extends Command
         $courseId = $input->getArgument('courseId');
 
         try {
-            $course = $this->client->getCourse($courseId);
+            $course = $this->googleClassroomService->getCourse($courseId);
             if (!$course) {
                 $io->error(sprintf('Le cours avec l\'ID "%s" n\'a pas été trouvé.', $courseId));
 
@@ -49,7 +49,7 @@ class ListStudentsCommand extends Command
 
             $io->title(sprintf('Élèves du cours : %s (%s)', $course->name, $course->id));
 
-            $students = $this->client->listStudents($courseId);
+            $students = $this->googleClassroomService->listStudents($courseId);
 
             if (empty($students)) {
                 $io->warning('Aucun élève trouvé dans ce cours.');

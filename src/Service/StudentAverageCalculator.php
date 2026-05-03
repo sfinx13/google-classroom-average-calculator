@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Client\GoogleClassroomClient;
 use App\Dto\CourseWork;
 use App\Dto\Student;
 use App\Dto\StudentAverage;
@@ -14,6 +13,8 @@ use App\Entity\Enum\Topic as TopicEnum;
 use App\Exception\NoGradesFoundException;
 use App\Exception\StudentNotFoundException;
 use App\Repository\StudentRepository;
+use App\Service\Google\GoogleClassroomService;
+use App\Service\Manager\ClassroomResultManager;
 use Google\Service\Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
@@ -21,7 +22,7 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 class StudentAverageCalculator
 {
     public function __construct(
-        private readonly GoogleClassroomClient $client,
+        private readonly GoogleClassroomService $client,
         private readonly ClassroomResultManager $classroomResultManager,
         private readonly StudentRepository $studentRepository,
         private readonly LoggerInterface $logger,

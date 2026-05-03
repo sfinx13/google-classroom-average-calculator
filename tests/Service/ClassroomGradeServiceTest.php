@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Service;
 
-use App\Client\GoogleClassroomClient;
 use App\Dto\Course;
 use App\Dto\CourseWork;
 use App\Dto\CourseWorkSubmission;
@@ -13,7 +12,8 @@ use App\Dto\Topic;
 use App\Exception\NoGradesFoundException;
 use App\Exception\StudentNotFoundException;
 use App\Repository\StudentRepository;
-use App\Service\ClassroomResultManager;
+use App\Service\Google\GoogleClassroomService;
+use App\Service\Manager\ClassroomResultManager;
 use App\Service\StudentAverageCalculator;
 use Google\Service\Exception;
 use PHPUnit\Framework\TestCase;
@@ -30,7 +30,7 @@ class ClassroomGradeServiceTest extends TestCase
      */
     public function testComputeStudentAverage(): void
     {
-        $client = $this->createMock(GoogleClassroomClient::class);
+        $client = $this->createMock(GoogleClassroomService::class);
         $resultManager = $this->createStub(ClassroomResultManager::class);
         $studentRepository = $this->createStub(StudentRepository::class);
         $logger = $this->createStub(LoggerInterface::class);
@@ -102,7 +102,7 @@ class ClassroomGradeServiceTest extends TestCase
      */
     public function testComputeStudentAverageWithDateFilter(): void
     {
-        $client = $this->createMock(GoogleClassroomClient::class);
+        $client = $this->createMock(GoogleClassroomService::class);
         $resultManager = $this->createStub(ClassroomResultManager::class);
         $studentRepository = $this->createStub(StudentRepository::class);
         $logger = $this->createStub(LoggerInterface::class);

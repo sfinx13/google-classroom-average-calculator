@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Service\Bulletin;
+namespace App\Service\Google\Bulletin;
 
 use App\Entity\ClassroomResult;
 use App\Repository\ClassroomResultRepository;
 use App\Utils\TrimesterHelper;
 
-class BulletinPlaceholderMapper
+class PlaceholderMapper
 {
     public function __construct(
         private readonly ClassroomResultRepository $classroomResultRepository,

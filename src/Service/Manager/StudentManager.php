@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Service\Manager;
 
 use App\Dto\Student as StudentDto;
 use App\Entity\Student;

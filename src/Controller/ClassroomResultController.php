@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Client\GoogleClassroomClient;
 use App\Dto\ClassroomResultFilterQuery;
 use App\Entity\ClassroomResult;
 use App\Entity\Enum\Topic;
 use App\Repository\ClassroomResultRepository;
-use App\Service\Bulletin\BulletinGoogleDocGenerator;
+use App\Service\Google\Bulletin\GoogleDocGenerator;
+use App\Service\Google\GoogleClassroomService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +25,7 @@ class ClassroomResultController extends AbstractController
     #[Route('/', name: 'app_classroom_results')]
     public function index(
         ClassroomResultRepository $classroomResultRepository,
-        GoogleClassroomClient $googleClassroomClient,
+        GoogleClassroomService $googleClassroomClient,
         #[MapQueryString] ?ClassroomResultFilterQuery $filterQuery,
     ): Response {
         $filterQuery ??= new ClassroomResultFilterQuery();
@@ -61,7 +61,7 @@ class ClassroomResultController extends AbstractController
     #[Route('/bulletin/{id}', name: 'app_classroom_result_bulletin')]
     public function generateBulletin(
         ClassroomResult $classroomResult,
-        BulletinGoogleDocGenerator $bulletinGenerator,
+        GoogleDocGenerator $bulletinGenerator,
         EntityManagerInterface $entityManager,
         Request $request,
     ): Response {
@@ -119,7 +119,7 @@ class ClassroomResultController extends AbstractController
     #[Route('/bulletin/{id}/delete', name: 'app_classroom_result_bulletin_delete', methods: ['POST'])]
     public function deleteBulletin(
         ClassroomResult $classroomResult,
-        BulletinGoogleDocGenerator $bulletinGenerator,
+        GoogleDocGenerator $bulletinGenerator,
         EntityManagerInterface $entityManager,
         Request $request,
     ): Response {

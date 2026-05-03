@@ -2,24 +2,22 @@
 
 declare(strict_types=1);
 
-namespace App\Client;
+namespace App\Service\Google;
 
 use App\Dto\Course;
 use App\Dto\CourseWork;
 use App\Dto\CourseWorkSubmission;
 use App\Dto\Student;
 use App\Dto\Topic;
-use Google\Client;
 use Google\Service\Classroom;
 use Google\Service\Docs;
 use Google\Service\Drive;
 use Google\Service\Exception;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-class GoogleClassroomClient
+class GoogleClassroomService
 {
-    private Classroom $service;
+    private Classroom $classroomService;
     private Drive $driveService;
     private Docs $docsService;
 
@@ -27,35 +25,11 @@ class GoogleClassroomClient
      * @throws \JsonException
      */
     public function __construct(
-        Client $client,
+        GoogleClientFactory $googleClientFactory,
         private readonly LoggerInterface $logger,
-        #[Autowire('%env(GOOGLE_CLIENT_ID)%')]
-        string $clientId,
-        #[Autowire('%env(GOOGLE_CLIENT_SECRET)%')]
-        string $clientSecret,
-        #[Autowire('%env(GOOGLE_REFRESH_TOKEN)%')]
-        string $refreshToken,
     ) {
-        $client->setClientId($clientId);
-        $client->setClientSecret($clientSecret);
-        $client->setAccessType('offline');
-
-        $client->addScope(Classroom::CLASSROOM_COURSES_READONLY);
-        $client->addScope(Classroom::CLASSROOM_TOPICS_READONLY);
-        $client->addScope(Classroom::CLASSROOM_ROSTERS_READONLY);
-        $client->addScope(Classroom::CLASSROOM_PROFILE_EMAILS);
-        $client->addScope(Docs::DOCUMENTS);
-        $client->addScope(Drive::DRIVE);
-        $client->addScope('https://www.googleapis.com/auth/classroom.student-submissions.students.readonly');
-
-        $token = $client->fetchAccessTokenWithRefreshToken($refreshToken);
-
-        if (!isset($token['access_token'])) {
-            throw new \RuntimeException(sprintf('Unable to fetch Google access token: %s', json_encode($token, JSON_THROW_ON_ERROR)));
-        }
-
-        $client->setAccessToken($token);
-        $this->service = new Classroom($client);
+        $client = $googleClientFactory->create();
+        $this->classroomService = new Classroom($client);
         $this->driveService = new Drive($client);
         $this->docsService = new Docs($client);
     }
@@ -74,7 +48,7 @@ class GoogleClassroomClient
     {
         $this->logger->info(sprintf('Fetching course %s', $courseId));
         try {
-            $course = $this->service->courses->get($courseId);
+            $course = $this->classroomService->courses->get($courseId);
 
             return new Course($course->getId(), $course->getName());
         } catch (\Exception $e) {
@@ -92,7 +66,7 @@ class GoogleClassroomClient
     public function listCourses(): array
     {
         $this->logger->info('Listing courses');
-        $response = $this->service->courses->listCourses();
+        $response = $this->classroomService->courses->listCourses();
         $courses = [];
 
         if ($response->getCourses()) {
@@ -112,7 +86,7 @@ class GoogleClassroomClient
     public function getTopics(string $courseId): array
     {
         $this->logger->info(sprintf('Fetching topics for course %s', $courseId));
-        $response = $this->service->courses_topics->listCoursesTopics($courseId);
+        $response = $this->classroomService->courses_topics->listCoursesTopics($courseId);
         $topics = [];
 
         if ($response->getTopic()) {
@@ -133,7 +107,7 @@ class GoogleClassroomClient
     public function getCourseWorks(string $courseId): array
     {
         $this->logger->info(sprintf('Fetching assignments for course %s', $courseId));
-        $response = $this->service->courses_courseWork->listCoursesCourseWork($courseId);
+        $response = $this->classroomService->courses_courseWork->listCoursesCourseWork($courseId);
         $assignments = [];
 
         if ($response->getCourseWork()) {
@@ -159,7 +133,7 @@ class GoogleClassroomClient
     public function listStudents(string $courseId): array
     {
         $this->logger->info(sprintf('Listing students for course %s', $courseId));
-        $response = $this->service->courses_students->listCoursesStudents($courseId);
+        $response = $this->classroomService->courses_students->listCoursesStudents($courseId);
         $students = [];
 
         if ($response->getStudents()) {
@@ -181,7 +155,7 @@ class GoogleClassroomClient
      */
     public function getStudentIdByName(string $courseId, string $name): ?Student
     {
-        $response = $this->service->courses_students->listCoursesStudents($courseId);
+        $response = $this->classroomService->courses_students->listCoursesStudents($courseId);
         if ($response->getStudents()) {
             foreach ($response->getStudents() as $student) {
                 $profile = $student->getProfile();
@@ -213,7 +187,7 @@ class GoogleClassroomClient
     public function getCourseWorkSubmissions(string $courseId, string $courseWorkId, string $userId): array
     {
         $this->logger->info(sprintf('Fetching submissions for course %s, assignment %s, user %s', $courseId, $courseWorkId, $userId));
-        $response = $this->service->courses_courseWork_studentSubmissions->listCoursesCourseWorkStudentSubmissions(
+        $response = $this->classroomService->courses_courseWork_studentSubmissions->listCoursesCourseWorkStudentSubmissions(
             $courseId,
             $courseWorkId,
             ['userId' => $userId]

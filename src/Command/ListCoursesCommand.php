@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Client\GoogleClassroomClient;
+use App\Service\Google\GoogleClassroomService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
@@ -19,7 +19,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class ListCoursesCommand extends Command
 {
     public function __construct(
-        private readonly GoogleClassroomClient $client,
+        private readonly GoogleClassroomService $client,
     ) {
         parent::__construct();
     }

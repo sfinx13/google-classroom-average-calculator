@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use Google\Client;
-use Google\Service\Classroom;
-use Google\Service\Docs;
-use Google\Service\Drive;
+use App\Service\Google\GoogleClientFactory;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 #[AsCommand(
     name: 'app:google:generate-refresh-token',
@@ -22,38 +18,21 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 class GenerateRefreshTokenCommand extends Command
 {
     public function __construct(
-        #[Autowire('%env(GOOGLE_CLIENT_ID)%')]
-        private readonly string $clientId,
-        #[Autowire('%env(GOOGLE_CLIENT_SECRET)%')]
-        private readonly string $clientSecret,
+        private readonly ?GoogleClientFactory $googleClientFactory = null,
     ) {
         parent::__construct();
     }
 
+    /**
+     * @throws \JsonException
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
-        if (!$this->clientId || !$this->clientSecret) {
-            $io->error('GOOGLE_CLIENT_ID ou GOOGLE_CLIENT_SECRET manquant dans le .env');
-
-            return Command::FAILURE;
-        }
-
-        $client = new Client();
-        $client->setClientId($this->clientId);
-        $client->setClientSecret($this->clientSecret);
+        $client = $this->googleClientFactory->create();
         $client->setRedirectUri('urn:ietf:wg:oauth:2.0:oob');
-        $client->setAccessType('offline');
         $client->setPrompt('select_account consent');
-
-        $client->addScope(Classroom::CLASSROOM_COURSES_READONLY);
-        $client->addScope(Classroom::CLASSROOM_TOPICS_READONLY);
-        $client->addScope(Classroom::CLASSROOM_ROSTERS_READONLY);
-        $client->addScope(Classroom::CLASSROOM_PROFILE_EMAILS);
-        $client->addScope(Docs::DOCUMENTS);
-        $client->addScope(Drive::DRIVE);
-        $client->addScope('https://www.googleapis.com/auth/classroom.student-submissions.students.readonly');
 
         $authUrl = $client->createAuthUrl();
 

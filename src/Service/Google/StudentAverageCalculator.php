@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Service\Google;
 
 use App\Dto\CourseWork;
 use App\Dto\Student;
@@ -13,7 +13,6 @@ use App\Entity\Enum\Topic as TopicEnum;
 use App\Exception\NoGradesFoundException;
 use App\Exception\StudentNotFoundException;
 use App\Repository\StudentRepository;
-use App\Service\Google\GoogleClassroomService;
 use App\Service\Manager\ClassroomResultManager;
 use Google\Service\Exception;
 use Psr\Log\LoggerInterface;
@@ -22,7 +21,7 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 class StudentAverageCalculator
 {
     public function __construct(
-        private readonly GoogleClassroomService $client,
+        private readonly GoogleClassroomService $googleClassroomService,
         private readonly ClassroomResultManager $classroomResultManager,
         private readonly StudentRepository $studentRepository,
         private readonly LoggerInterface $logger,
@@ -74,19 +73,19 @@ class StudentAverageCalculator
             }
         }
 
-        $course = $this->client->getCourse($courseId);
+        $course = $this->googleClassroomService->getCourse($courseId);
         if (!$course) {
             throw new StudentNotFoundException(sprintf('Course %s not found', $courseId));
         }
 
-        $student = $this->client->getStudentIdByName($courseId, $studentName);
+        $student = $this->googleClassroomService->getStudentIdByName($courseId, $studentName);
         if (null === $student) {
             throw new StudentNotFoundException(sprintf('Student %s not found in course %s', $studentName, $courseId));
         }
         $this->logger->info(sprintf('Resolved student %s to ID %s', $student->name, $student->id));
 
-        $topics = $this->client->getTopics($courseId);
-        $courseWorks = $this->client->getCourseWorks($courseId);
+        $topics = $this->googleClassroomService->getTopics($courseId);
+        $courseWorks = $this->googleClassroomService->getCourseWorks($courseId);
 
         $filteredCourseWorks = $this->filterCourseWorks($courseWorks, $startDate, $endDate);
 
@@ -176,7 +175,7 @@ class StudentAverageCalculator
 
         $current = 0;
         foreach ($filteredCourseWorks as $courseWork) {
-            $submissions = $this->client->getCourseWorkSubmissions($courseId, $courseWork->id, $student->id);
+            $submissions = $this->googleClassroomService->getCourseWorkSubmissions($courseId, $courseWork->id, $student->id);
 
             foreach ($submissions as $submission) {
                 if (null !== $submission->assignedGrade) {

@@ -6,7 +6,7 @@ namespace App\Command;
 
 use App\Exception\NoGradesFoundException;
 use App\Exception\StudentNotFoundException;
-use App\Service\StudentAverageCalculator;
+use App\Service\Google\StudentAverageCalculator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;

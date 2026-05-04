@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Service;
+namespace App\Tests\Service\Google;
 
 use App\Dto\Course;
 use App\Dto\CourseWork;
@@ -13,14 +13,14 @@ use App\Exception\NoGradesFoundException;
 use App\Exception\StudentNotFoundException;
 use App\Repository\StudentRepository;
 use App\Service\Google\GoogleClassroomService;
+use App\Service\Google\StudentAverageCalculator;
 use App\Service\Manager\ClassroomResultManager;
-use App\Service\StudentAverageCalculator;
 use Google\Service\Exception;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
-class ClassroomGradeServiceTest extends TestCase
+class StudentAverageCalculatorTest extends TestCase
 {
     /**
      * @throws NoGradesFoundException
@@ -78,8 +78,8 @@ class ClassroomGradeServiceTest extends TestCase
                 [$courseId, 'as3', $studentId, [new CourseWorkSubmission('sub3', 'as3', 12.0)]],
             ]);
 
-        $service = new StudentAverageCalculator($client, $resultManager, $studentRepository, $logger);
-        $result = $service->calculate($studentId, $courseId, new \DateTimeImmutable('2025-01-01'), new \DateTimeImmutable('2025-12-31'));
+        $studentAverageCalculator = new StudentAverageCalculator($client, $resultManager, $studentRepository, $logger);
+        $result = $studentAverageCalculator->calculate($studentId, $courseId, new \DateTimeImmutable('2025-01-01'), new \DateTimeImmutable('2025-12-31'));
 
         $this->assertEquals($studentId, $result->studentName);
         $this->assertCount(2, $result->subjects);
@@ -147,12 +147,12 @@ class ClassroomGradeServiceTest extends TestCase
                 [$courseId, 'as2', $studentId, [new CourseWorkSubmission('sub2', 'as2', 15.0)]],
             ]);
 
-        $service = new StudentAverageCalculator($client, $resultManager, $studentRepository, $logger);
+        $studentAverageCalculator = new StudentAverageCalculator($client, $resultManager, $studentRepository, $logger);
 
         $startDate = new \DateTimeImmutable('2025-01-01');
         $endDate = new \DateTimeImmutable('2025-01-31');
 
-        $result = $service->calculate($studentId, $courseId, $startDate, $endDate);
+        $result = $studentAverageCalculator->calculate($studentId, $courseId, $startDate, $endDate);
 
         $this->assertCount(1, $result->subjects);
         $this->assertEquals('Grammaire', $result->subjects[0]->subjectName);

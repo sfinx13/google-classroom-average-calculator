@@ -25,7 +25,7 @@ final readonly class GoogleClientFactory
     /**
      * @throws \JsonException
      */
-    public function create(): Client
+    public function create(bool $fetchAccessTokenWithRefreshToken = true): Client
     {
         $client = new Client();
 
@@ -41,13 +41,15 @@ final readonly class GoogleClientFactory
         $client->addScope(Drive::DRIVE);
         $client->addScope('https://www.googleapis.com/auth/classroom.student-submissions.students.readonly');
 
-        $token = $client->fetchAccessTokenWithRefreshToken($this->refreshToken);
+        if ($fetchAccessTokenWithRefreshToken) {
+            $token = $client->fetchAccessTokenWithRefreshToken($this->refreshToken);
 
-        if (!isset($token['access_token'])) {
-            throw new \RuntimeException(sprintf('Unable to fetch Google access token: %s', json_encode($token, JSON_THROW_ON_ERROR)));
+            if (!isset($token['access_token'])) {
+                throw new \RuntimeException(sprintf('Unable to fetch Google access token: %s', json_encode($token, JSON_THROW_ON_ERROR)));
+            }
+
+            $client->setAccessToken($token);
         }
-
-        $client->setAccessToken($token);
 
         return $client;
     }

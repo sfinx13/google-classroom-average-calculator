@@ -30,7 +30,7 @@ class GenerateRefreshTokenCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $client = $this->googleClientFactory->create();
+        $client = $this->googleClientFactory->create(fetchAccessTokenWithRefreshToken: false);
         $client->setRedirectUri('urn:ietf:wg:oauth:2.0:oob');
         $client->setPrompt('select_account consent');
 
